@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Student Life Toolkit</title>
+<style>
+:root{--bg:#f5f7fb;--card:#fff;--tx:#1b2333;--mu:#5d6985;--ac:#4f46e5;--ac2:#e0e7ff;--bd:#dde3ef}
+@media(prefers-color-scheme:dark){:root{--bg:#10141f;--card:#1a2030;--tx:#eef1f8;--mu:#9aa6c2;--ac:#818cf8;--ac2:#2a3050;--bd:#2c3550}}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--tx)}
+header{padding:20px 16px 8px;max-width:760px;margin:auto}h1{margin:0;font-size:1.5rem}header p{margin:4px 0 0;color:var(--mu)}
+nav{display:flex;gap:6px;overflow-x:auto;padding:10px 16px;max-width:760px;margin:auto}
+nav button{border:1px solid var(--bd);background:var(--card);color:var(--tx);padding:9px 14px;border-radius:20px;font-size:.95rem;white-space:nowrap;cursor:pointer}
+nav button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+main{max-width:760px;margin:auto;padding:0 16px 40px}
+section{display:none;background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px}section.on{display:block}
+h2{margin:0 0 10px;font-size:1.2rem}label{display:block;font-size:.85rem;color:var(--mu);margin:8px 0 3px}
+input,select,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font-size:1rem}
+.row{display:flex;gap:8px}.row>*{flex:1}
+button.p,a.btn{display:inline-block;background:var(--ac);color:#fff;border:0;border-radius:8px;padding:10px 16px;font-size:1rem;margin-top:10px;cursor:pointer;text-decoration:none}
+button.s{background:var(--ac2);color:var(--tx);border:0;border-radius:8px;padding:6px 10px;cursor:pointer}
+.item{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px;border:1px solid var(--bd);border-radius:10px;margin-top:8px}
+.item small{color:var(--mu);display:block}.big{font-size:2rem;font-weight:700}.mu{color:var(--mu);font-size:.85rem}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.grid a{display:block;text-align:center;margin:0}
+.cta{background:var(--ac2);border-radius:12px;padding:14px;margin-top:14px}
+.done{text-decoration:line-through;opacity:.55}
+</style></head><body>
+<header><h1>🎓 Student Life Toolkit</h1><p>Schedule, tasks, GPA, budget, music and more. Free, private, saved on your device.</p></header>
+<nav id="nav"></nav>
+<main>
+
+<section id="schedule"><h2>📅 Class Schedule</h2>
+<label>Class</label><input id="cn" placeholder="e.g. Biology 101">
+<div class="row"><div><label>Day</label><select id="cd"><option>Mon</option><option>Tue</option><option>Wed</option><option>Thu</option><option>Fri</option><option>Sat</option><option>Sun</option></select></div>
+<div><label>Start</label><input id="cs" type="time"></div><div><label>End</label><input id="ce" type="time"></div></div>
+<label>Room</label><input id="cr" placeholder="Room / building"><button class="p" onclick="addClass()">Add class</button>
+<div id="clist"></div></section>
+
+<section id="tasks"><h2>✅ Assignments &amp; Exams</h2>
+<label>What's due?</label><input id="tn" placeholder="Paper, quiz, exam…">
+<label>Due date</label><input id="td" type="date"><button class="p" onclick="addTask()">Add</button>
+<div id="tlist"></div></section>
+
+<section id="gpa"><h2>📊 GPA Calculator</h2>
+<div id="grows"></div><button class="s" onclick="addG()">+ Add course</button>
+<div style="margin-top:14px"><div class="mu">Your GPA</div><div class="big" id="gout">0.00</div></div></section>
+
+<section id="money"><h2>💵 Student Budget</h2>
+<div class="row"><div><label>Monthly income</label><input id="bi" type="number" inputmode="decimal" oninput="bud()"></div><div><label>Rent / housing</label><input id="br" type="number" inputmode="decimal" oninput="bud()"></div></div>
+<div class="row"><div><label>Food</label><input id="bf" type="number" inputmode="decimal" oninput="bud()"></div><div><label>Phone &amp; subscriptions</label><input id="bs" type="number" inputmode="decimal" oninput="bud()"></div></div>
+<div class="row"><div><label>Transport</label><input id="bt" type="number" inputmode="decimal" oninput="bud()"></div><div><label>Loan payments</label><input id="bl" type="number" inputmode="decimal" oninput="bud()"></div></div>
+<div class="row"><div><label>Fun / other</label><input id="bo" type="number" inputmode="decimal" oninput="bud()"></div><div></div></div>
+<div style="margin-top:14px"><div class="mu">Left over each month</div><div class="big" id="bout">$0</div><div class="mu" id="bmsg"></div></div></section>
+
+<section id="music"><h2>🎧 Music &amp; Focus</h2>
+<div class="mu">Focus timer (25 min study / 5 min break)</div>
+<div class="big" id="tm">25:00</div>
+<button class="p" onclick="pom()">Start / Pause</button> <button class="s" onclick="pomReset()">Reset</button>
+<p class="mu" id="tmode">Study time</p>
+<h2 style="margin-top:18px">Pick a vibe</h2>
+<div class="grid">
+<a class="btn" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=lofi+study+beats">Lo-fi study</a>
+<a class="btn" target="_blank" rel="noopener" href="https://open.spotify.com/search/deep%20focus">Deep focus</a>
+<a class="btn" target="_blank" rel="noopener" href="https://open.spotify.com/search/workout%20mix">Gym</a>
+<a class="btn" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=classical+music+for+studying">Classical</a>
+<a class="btn" target="_blank" rel="noopener" href="https://open.spotify.com/search/chill%20vibes">Chill</a>
+<a class="btn" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=rain+sounds+for+sleeping">Rain / sleep</a>
+</div>
+<label style="margin-top:14px">My go-to playlist link</label><input id="pl" placeholder="Paste a Spotify / YouTube / Apple link" oninput="save('pl',this.value)">
+<a class="btn" id="plgo" target="_blank" rel="noopener" href="#">Open my playlist</a></section>
+
+<section id="social"><h2>📱 Social Hub</h2>
+<div class="grid">
+<a class="btn" target="_blank" rel="noopener" href="https://www.instagram.com">Instagram</a>
+<a class="btn" target="_blank" rel="noopener" href="https://www.tiktok.com">TikTok</a>
+<a class="btn" target="_blank" rel="noopener" href="https://www.snapchat.com">Snapchat</a>
+<a class="btn" target="_blank" rel="noopener" href="https://www.youtube.com">YouTube</a>
+<a class="btn" target="_blank" rel="noopener" href="https://www.linkedin.com">LinkedIn</a>
+<a class="btn" target="_blank" rel="noopener" href="https://discord.com/app">Discord</a>
+<a class="btn" target="_blank" rel="noopener" href="https://www.reddit.com">Reddit</a>
+<a class="btn" target="_blank" rel="noopener" href="https://www.facebook.com">Facebook</a></div>
+<div class="cta"><b>Career tip:</b> Your LinkedIn profile matters before you graduate. Add your school, major, part-time jobs and any clubs you join. Recruiters look.</div>
+<label style="margin-top:12px">Screen-time check: hours on social today</label><input id="sh" type="number" inputmode="decimal" oninput="scr()">
+<p class="mu" id="smsg"></p></section>
+
+<section id="loan"><h2>🎓 Loan Payoff Calculator</h2>
+<div class="row"><div><label>Loan balance</label><input id="lb" type="number" inputmode="decimal" oninput="loan()"></div><div><label>Interest rate %</label><input id="lr" type="number" inputmode="decimal" oninput="loan()"></div></div>
+<div class="row"><div><label>Monthly payment</label><input id="lp" type="number" inputmode="decimal" oninput="loan()"></div><div><label>Extra per month</label><input id="le" type="number" inputmode="decimal" oninput="loan()"></div></div>
+<div style="margin-top:14px"><div class="mu">Paid off in</div><div class="big" id="lout">-</div><div class="mu" id="lmsg"></div></div>
+<div class="cta"><b>Co-signed loan?</b> If a parent or relative co-signed, they may still owe the balance if something happens to you. Ask Ron how life insurance can keep that from landing on your family.
+<a class="btn" onclick="show('protect')">Ask about coverage</a></div></section>
+
+<section id="jobs"><h2>💼 Scholarships &amp; Internships</h2>
+<p class="mu">Start free. Apply early and often.</p>
+<div class="grid">
+<a class="btn" target="_blank" rel="noopener" href="https://studentaid.gov/h/apply-for-aid/fafsa">FAFSA</a>
+<a class="btn" target="_blank" rel="noopener" href="https://bold.org/scholarships/">Bold.org</a>
+<a class="btn" target="_blank" rel="noopener" href="https://www.fastweb.com">Fastweb</a>
+<a class="btn" target="_blank" rel="noopener" href="https://www.scholarships.com">Scholarships.com</a>
+<a class="btn" target="_blank" rel="noopener" href="https://joinhandshake.com">Handshake</a>
+<a class="btn" target="_blank" rel="noopener" href="https://www.linkedin.com/jobs/search/?keywords=internship">LinkedIn Internships</a>
+<a class="btn" target="_blank" rel="noopener" href="https://www.indeed.com/q-student-part-time-jobs.html">Part-time jobs</a>
+<a class="btn" target="_blank" rel="noopener" href="https://www.google.com/search?q=scholarships+for+students+in+my+state">Search my state</a></div>
+<h2 style="margin-top:18px">Application tracker</h2>
+<label>Scholarship or internship</label><input id="jn"><label>Deadline</label><input id="jd" type="date">
+<button class="p" onclick="addJ()">Track it</button><div id="jlist"></div></section>
+
+<section id="protect"><h2>🛡️ Money Moves for Young Adults</h2>
+<p>The best time to look at life insurance is while you're young and healthy. Rates are based on your age and health when you apply, and health can change without warning. Life insurance may also help if a parent co-signed your student loans.</p>
+<p><b>Why students ask about it:</b></p>
+<ul><li>Lock in insurability while you're healthy</li><li>Cover co-signed student loans so family isn't stuck with them</li><li>Some permanent policies build cash value you can borrow against later</li><li>Builds a base for your future family or business</li></ul>
+<div class="cta"><b>Get a free, no-pressure quote</b>
+<label>Your name</label><input id="qn"><label>Age</label><input id="qa" type="number" inputmode="numeric">
+<label>Best way to reach you</label><input id="qc" placeholder="Phone or email">
+<button class="p" onclick="quote()">Text my request</button>
+<p class="mu">This opens a text to Ron Launsby, Missouri Licensed Life Insurance Agent, 832-353-8289.</p></div>
+<p class="mu">Life insurance products, including indexed universal life, have costs, caps and surrender charges, and values are not guaranteed. This toolkit is for general education, not tax, legal or financial advice. Not available in all states.</p></section>
+
+</main>
+<script>
+var tabs=[["schedule","📅 Schedule"],["tasks","✅ Tasks"],["gpa","📊 GPA"],["money","💵 Budget"],["loan","🎓 Loans"],["jobs","💼 Scholarships"],["music","🎧 Music"],["social","📱 Social"],["protect","🛡️ Protect"]];
+function ld(k,d){try{var v=localStorage.getItem('stl_'+k);return v?JSON.parse(v):d}catch(e){return d}}
+function save(k,v){try{localStorage.setItem('stl_'+k,JSON.stringify(v))}catch(e){}if(k==='pl')plink()}
+function $(i){return document.getElementById(i)}
+function show(id){tabs.forEach(function(t){$(t[0]).classList.toggle('on',t[0]===id)});[].forEach.call($('nav').children,function(b){b.classList.toggle('on',b.dataset.t===id)});save('tab',id)}
+tabs.forEach(function(t){var b=document.createElement('button');b.textContent=t[1];b.dataset.t=t[0];b.onclick=function(){show(t[0])};$('nav').appendChild(b)});
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+var days=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],cls=ld('cls',[]),tk=ld('tk',[]),gs=ld('gs',[{n:'',c:3,g:4},{n:'',c:3,g:4}]);
+function addClass(){if(!$('cn').value)return;cls.push({n:$('cn').value,d:$('cd').value,s:$('cs').value,e:$('ce').value,r:$('cr').value});save('cls',cls);$('cn').value='';rc()}
+function rc(){var h='';days.forEach(function(d){cls.map(function(c,i){return[c,i]}).filter(function(x){return x[0].d===d}).sort(function(a,b){return a[0].s>b[0].s?1:-1}).forEach(function(x){var c=x[0];h+='<div class="item"><div><b>'+esc(c.n)+'</b><small>'+d+' '+esc(c.s)+'–'+esc(c.e)+' '+esc(c.r)+'</small></div><button class="s" onclick="cls.splice('+x[1]+',1);save(\'cls\',cls);rc()">✕</button></div>'})});$('clist').innerHTML=h||'<p class="mu">No classes yet.</p>'}
+function addTask(){if(!$('tn').value)return;tk.push({n:$('tn').value,d:$('td').value,x:0});tk.sort(function(a,b){return(a.d||'9')>(b.d||'9')?1:-1});save('tk',tk);$('tn').value='';rt()}
+function rt(){$('tlist').innerHTML=tk.map(function(t,i){var dl='';if(t.d){var n=Math.ceil((new Date(t.d+'T00:00')-new Date())/864e5);dl=n<0?'overdue':n===0?'due today':n+' days left'}return'<div class="item"><div class="'+(t.x?'done':'')+'"><b>'+esc(t.n)+'</b><small>'+esc(t.d||'')+' '+dl+'</small></div><span><button class="s" onclick="tk['+i+'].x^=1;save(\'tk\',tk);rt()">✓</button> <button class="s" onclick="tk.splice('+i+',1);save(\'tk\',tk);rt()">✕</button></span></div>'}).join('')||'<p class="mu">Nothing due. Nice.</p>'}
+function addG(){gs.push({n:'',c:3,g:4});rg()}
+function rg(){$('grows').innerHTML=gs.map(function(g,i){var o='';[['A',4],['B',3],['C',2],['D',1],['F',0]].forEach(function(p){o+='<option value="'+p[1]+'"'+(g.g==p[1]?' selected':'')+'>'+p[0]+'</option>'});return'<div class="row" style="margin-top:6px"><input placeholder="Course" value="'+esc(g.n)+'" oninput="gs['+i+'].n=this.value;gc()"><input type="number" min="1" max="6" value="'+g.c+'" oninput="gs['+i+'].c=+this.value;gc()" style="max-width:70px"><select onchange="gs['+i+'].g=+this.value;gc()" style="max-width:70px">'+o+'</select></div>'}).join('');gc()}
+function gc(){var p=0,c=0;gs.forEach(function(g){p+=g.c*g.g;c+=g.c});$('gout').textContent=c?(p/c).toFixed(2):'0.00';save('gs',gs)}
+var bf=['bi','br','bf','bs','bt','bl','bo'];
+function bud(){var v=bf.map(function(i){return+$(i).value||0});var l=v[0]-v.slice(1).reduce(function(a,b){return a+b},0);$('bout').textContent=(l<0?'-':'')+'$'+Math.abs(l).toFixed(0);$('bmsg').textContent=v[0]?(l<0?'You are spending more than you earn. Trim fun and subscriptions first.':l<v[0]*.1?'Tight. Aim to keep 10% free for savings.':'Good. Move part of this to savings or an emergency fund.'):'';save('bud',v)}
+var secs=1500,run=0,brk=0,iv;
+function fm(){$('tm').textContent=('0'+Math.floor(secs/60)).slice(-2)+':'+('0'+secs%60).slice(-2)}
+function pom(){if(run){clearInterval(iv);run=0;return}run=1;iv=setInterval(function(){secs--;if(secs<=0){brk^=1;secs=brk?300:1500;$('tmode').textContent=brk?'Break time':'Study time';try{navigator.vibrate&&navigator.vibrate(300)}catch(e){}}fm()},1000)}
+function pomReset(){clearInterval(iv);run=0;brk=0;secs=1500;$('tmode').textContent='Study time';fm()}
+function plink(){var v=$('pl').value.trim();$('plgo').href=/^https?:\/\//.test(v)?v:'#'}
+function scr(){var h=+$('sh').value;$('smsg').textContent=h>=5?'That is over 5 hours. Try app limits during study blocks.':h>0?'Looks balanced. Keep it up.':''}
+function quote(){var m='Hi Ron, I would like a free life insurance quote. Name: '+$('qn').value+', Age: '+$('qa').value+', Contact: '+$('qc').value;location.href='sms:+18323538289?&body='+encodeURIComponent(m)}
+var jb=ld('jb',[]);
+function addJ(){if(!$('jn').value)return;jb.push({n:$('jn').value,d:$('jd').value});jb.sort(function(a,b){return(a.d||'9')>(b.d||'9')?1:-1});save('jb',jb);$('jn').value='';rj()}
+function rj(){$('jlist').innerHTML=jb.map(function(t,i){var dl='';if(t.d){var n=Math.ceil((new Date(t.d+'T00:00')-new Date())/864e5);dl=n<0?'passed':n+' days left'}return'<div class="item"><div><b>'+esc(t.n)+'</b><small>'+esc(t.d||'')+' '+dl+'</small></div><button class="s" onclick="jb.splice('+i+',1);save(\'jb\',jb);rj()">✕</button></div>'}).join('')}
+function sim(b,r,p){var m=0,t=0;while(b>0&&m<1200){var i=b*r;if(p<=i)return null;t+=i;b=b+i-p;m++}return{m:m,t:t}}
+function yrs(m){return Math.floor(m/12)+' yr '+m%12+' mo'}
+function loan(){var b=+$('lb').value,r=+$('lr').value/1200,p=+$('lp').value,e=+$('le').value;if(!b||!p){$('lout').textContent='-';$('lmsg').textContent='';return}var a=sim(b,r,p);if(!a){$('lout').textContent='Never';$('lmsg').textContent='Your payment does not cover the monthly interest. Raise it.';return}$('lout').textContent=yrs(a.m);var o='Total interest: $'+a.t.toFixed(0)+'. ';if(e>0){var c=sim(b,r,p+e);if(c)o+='Adding $'+e+'/mo saves $'+(a.t-c.t).toFixed(0)+' in interest and '+(a.m-c.m)+' months.'}$('lmsg').textContent=o;save('ln',[b,+$('lr').value,p,e])}
+var ln=ld('ln',[]);['lb','lr','lp','le'].forEach(function(i,k){if(ln[k])$(i).value=ln[k]});loan();rj();
+$('pl').value=ld('pl','');plink();var b=ld('bud',[]);bf.forEach(function(i,k){if(b[k])$(i).value=b[k]});bud();rc();rt();rg();fm();show(ld('tab','schedule'));
+</script></body></html>
